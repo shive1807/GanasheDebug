@@ -6,7 +6,7 @@ require ('chai')
 	.should()
 
 
-contract ('SocialNetwork', (accounts)=>{
+contract ('SocialNetwork', ([deployer, author, tipper])=>{
 	let socialNetwork
 
 
@@ -29,4 +29,26 @@ contract ('SocialNetwork', (accounts)=>{
 			assert.equal(name, 'shivam social network')
 		})
 	})
-}) 
+
+	describe('posts', async ()=>{
+
+		let result, postCount;
+
+		it('creates posts', async ()=>{
+			result = await socialNetwork.createPost('This is my first post', {from: author})
+			postCount = await socialNetwork.PostCount()
+			//SUCCESS
+			assert.equal(postCount, 1)
+			const event = result.logs[0].args
+
+			assert.equal(event.id.toNumber(), postCount.toNumber(), 'id is correct')
+			assert.equal(event.content, 'This is my first post', 'content is correct')
+			assert.equal(event.tipAmount, '0', 'tip amount is correct')
+			assert.equal(event.author, author, 'author is correct')
+			console.log(result)
+		})
+		
+		// it('lists posts', async ()=>{})
+		// it('allows users to tip posts', async ()=>{})
+	})
+})  
